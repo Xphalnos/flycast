@@ -26,9 +26,7 @@
 #include "texture.h"
 #include <set>
 
-#if VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
-#endif
 
 VulkanContext *VulkanContext::contextInstance;
 
@@ -46,10 +44,8 @@ bool VkCreateDevice(retro_vulkan_context* context, VkInstance instance, VkPhysic
 		const char** required_device_layers, unsigned num_required_device_layers,
 		const VkPhysicalDeviceFeatures* required_features)
 {
-#if VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(get_instance_proc_addr);
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(instance);
-#endif
 
 	vk::PhysicalDevice physicalDevice(gpu);
 	if (gpu == VK_NULL_HANDLE)
@@ -231,9 +227,7 @@ bool VkCreateDevice(retro_vulkan_context* context, VkInstance instance, VkPhysic
 	vk::Device newDevice = physicalDevice.createDevice(deviceCreateInfo);
 
 	context->device = (VkDevice)newDevice;
-#if VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(context->device);
-#endif
 
 	// Queues
 	context->queue = (VkQueue)newDevice.getQueue(context->queue_family_index, 0);

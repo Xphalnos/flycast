@@ -37,9 +37,7 @@
 #include "adreno.h"
 #endif
 
-#if VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
-#endif
 
 #include <memory>
 #include <set>
@@ -143,7 +141,6 @@ bool VulkanContext::InitInstance(const char** extensions, uint32_t extensions_co
 {
 	try
 	{
-#if VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1
 #if defined(__ANDROID__) && HOST_CPU == CPU_ARM64
 		PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = loadVulkanDriver();
 		if (vkGetInstanceProcAddr == nullptr) {
@@ -153,7 +150,6 @@ bool VulkanContext::InitInstance(const char** extensions, uint32_t extensions_co
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
 #else
 		VULKAN_HPP_DEFAULT_DISPATCHER.init();
-#endif
 #endif
 		bool vulkan11 = false;
 		if (VULKAN_HPP_DEFAULT_DISPATCHER.vkEnumerateInstanceVersion != nullptr)
@@ -187,9 +183,7 @@ bool VulkanContext::InitInstance(const char** extensions, uint32_t extensions_co
 		// create a UniqueInstance
 		instance = vk::createInstanceUnique(instanceCreateInfo);
 
-#if VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(*instance);
-#endif
 
 #ifdef VK_DEBUG
 #ifndef __ANDROID__
@@ -334,11 +328,9 @@ void VulkanContext::InitImgui()
 	initInfo.CheckVkResultFn = &CheckImGuiResult;
 #endif
 
-#if VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1
 	ImGui_ImplVulkan_LoadFunctions([](const char *function_name, void *) {
 		return VULKAN_HPP_DEFAULT_DISPATCHER.vkGetInstanceProcAddr((VkInstance) *contextInstance->instance, function_name);
 	});
-#endif
 
 	if (!ImGui_ImplVulkan_Init(&initInfo))
 		throw FlycastException("Vulkan ImGui initialization failed");
@@ -515,9 +507,7 @@ bool VulkanContext::InitDevice()
 				nullptr, enabledExtensions, &features));
 		}
 
-#if VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(*device);
-#endif
 
 	    // Queues
 	    graphicsQueue = device->getQueue(graphicsQueueIndex, 0);
