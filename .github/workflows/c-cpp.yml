@@ -127,7 +127,7 @@ jobs:
           rm artifact/bin/flycast
         if: matrix.config.name == 'x86_64-pc-linux-gnu'
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: flycast-${{ matrix.config.name }}
           path: |

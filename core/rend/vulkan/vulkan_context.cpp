@@ -144,18 +144,16 @@ bool VulkanContext::InitInstance(const char** extensions, uint32_t extensions_co
 	try
 	{
 #if VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1
-		PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = nullptr;
 #if defined(__ANDROID__) && HOST_CPU == CPU_ARM64
-		vkGetInstanceProcAddr = loadVulkanDriver();
-#else
-		static vk::DynamicLoader dl;
-		vkGetInstanceProcAddr = dl.getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr");
-#endif
+		PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = loadVulkanDriver();
 		if (vkGetInstanceProcAddr == nullptr) {
 			ERROR_LOG(RENDERER, "Vulkan entry point vkGetInstanceProcAddr not found");
 			return false;
 		}
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
+#else
+		VULKAN_HPP_DEFAULT_DISPATCHER.init();
+#endif
 #endif
 		bool vulkan11 = false;
 		if (VULKAN_HPP_DEFAULT_DISPATCHER.vkEnumerateInstanceVersion != nullptr)
